@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄帝内经 - 中医宝典 - 北京理工大学附属中医医院</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#C1272D', // 中医红
+                        secondary: '#D4AF37', // 金色
+                        tertiary: '#1A5653', // 中医绿
+                        neutral: '#F9F5F1', // 米白色背景
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'system-ui', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 滚动动画样式 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 延迟动画类 */
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
+        
+        /* 滚动进度条 */
+        #scrollProgress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background-color: #C1272D;
+            z-index: 100;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+        
+        /* 导航栏滚动效果 */
+        .navbar-scrolled {
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        /* 章节列表样式 */
+        .chapter-item:hover {
+            background-color: rgba(193, 39, 45, 0.05);
+            border-left-color: #C1272D;
+        }
+        
+        /* 引用样式 */
+        .quote-block {
+            border-left: 4px solid #C1272D;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="bg-neutral font-sans">
+    <!-- 滚动进度条 -->
+    <div id="scrollProgress"></div>
+
+    <!-- 导航栏 -->
+    <header class="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <i class="fa fa-heartbeat text-primary text-2xl mr-2"></i>
+                <span class="text-xl font-bold text-gray-800">北京理工大学附属中医医院</span>
+            </a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="index.html#about" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    医院简介
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="expert.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    专家介绍
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="classroom.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    中医小课堂
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="treasury.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    中医宝典
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-primary transition-all duration-300"></span>
+                </a>
+            </nav>
+            <button class="md:hidden text-gray-700 focus:outline-none" id="menuBtn">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white w-full shadow-md absolute top-full left-0" id="mobileMenu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="index.html#about" class="text-gray-700 hover:text-primary py-2 transition-colors">医院简介</a>
+                <a href="expert.html" class="text-gray-700 hover:text-primary py-2 transition-colors">专家介绍</a>
+                <a href="classroom.html" class="text-gray-700 hover:text-primary py-2 transition-colors">中医小课堂</a>
+                <a href="treasury.html" class="text-primary font-semibold py-2 transition-colors">中医宝典</a>
+                <a href="patient_guide.html" class="text-gray-700 hover:text-primary py-2 transition-colors">线上问诊指南</a>
+                <a href="doctor_guide.html" class="text-gray-700 hover:text-primary py-2 transition-colors">医生操作指南</a>
+                <a href="db_guide.html" class="text-gray-700 hover:text-primary py-2 transition-colors">数据库管理指南</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面头部 -->
+    <section class="pt-16 md:pt-20 h-64 bg-cover bg-center relative" style="background-image: url('https://picsum.photos/id/1073/1920/300?random=50');">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="container mx-auto px-4 h-full flex flex-col justify-center relative z-10">
+            <div class="flex items-center text-white mb-2">
+                <a href="treasury.html" class="hover:underline mr-2">中医宝典</a>
+                <i class="fa fa-angle-right text-sm mx-2"></i>
+                <span>中医经典著作</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-white text-shadow">黄帝内经</h1>
+            <p class="text-white text-shadow mt-2">中医理论奠基之作</p>
+        </div>
+    </section>
+
+    <!-- 主要内容 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col lg:flex-row gap-10">
+                    <!-- 左侧主要内容 -->
+                    <div class="lg:w-2/3">
+                        <!-- 书籍封面和基本信息 -->
+                        <div class="flex flex-col md:flex-row gap-6 mb-10 scroll-animate">
+                            <div class="md:w-1/3">
+                                <div class="rounded-lg overflow-hidden shadow-lg">
+                                    <img src="huangdi-neijing.png" alt="黄帝内经" class="w-full h-auto object-cover">
+                                </div>
+                            </div>
+                            <div class="md:w-2/3">
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="bg-tertiary/10 text-tertiary text-sm px-3 py-1 rounded-full">中医经典</span>
+                                    <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">理论奠基</span>
+                                    <span class="bg-secondary/10 text-secondary text-sm px-3 py-1 rounded-full">传统医学</span>
+                                </div>
+                                <div class="space-y-4">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-1">成书年代</h3>
+                                        <p class="text-gray-700">战国至秦汉时期（约公元前3世纪至公元1世纪）</p>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-1">作者</h3>
+                                        <p class="text-gray-700">非一时一人之作，由古代医家不断补充完善而成</p>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-1">组成部分</h3>
+                                        <p class="text-gray-700">《素问》和《灵枢》两部分，各9卷81篇，共162篇</p>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-1">核心思想</h3>
+                                        <p class="text-gray-700">阴阳五行、天人合一、整体观念、辨证论治</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 书籍简介 -->
+                        <div class="mb-12 scroll-animate delay-100">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">书籍简介</h2>
+                            <div class="prose prose-lg text-gray-700 max-w-none">
+                                <p class="mb-4">
+                                    《黄帝内经》是中国最早的医学典籍，传统医学四大经典著作之一（其余三者为《难经》《伤寒杂病论》《神农本草经》）。
+                                </p>
+                                <p class="mb-4">
+                                    该书以黄帝与岐伯、雷公等大臣问答的形式编撰而成，奠定了人体生理、病理、诊断以及治疗的认识基础，是中国影响极大的一部医学著作，被称为医之始祖。
+                                </p>
+                                <p>
+                                    《黄帝内经》的医学理论建立在中国古代哲学理论的基础之上，反映了中国古代朴素唯物主义辨证思想。其内容博大精深，涉及生理学、病理学、诊断学、治疗原则和药物学等各个方面。
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- 核心思想 -->
+                        <div class="mb-12 scroll-animate delay-200">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">核心思想</h2>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div class="bg-neutral p-6 rounded-lg hover:shadow-md transition-shadow">
+                                    <div class="flex items-center mb-4">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                            <i class="fa fa-balance-scale text-primary"></i>
+                                        </div>
+                                        <h3 class="text-xl font-semibold text-gray-800">阴阳五行学说</h3>
+                                    </div>
+                                    <p class="text-gray-700">
+                                        认为宇宙间一切事物都是由相互对立又相互关联的阴阳两个方面构成，五行（木、火、土、金、水）是构成宇宙万物的基本物质，也是脏腑经络的属性分类。
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-neutral p-6 rounded-lg hover:shadow-md transition-shadow">
+                                    <div class="flex items-center mb-4">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                            <i class="fa fa-globe text-primary"></i>
+                                        </div>
+                                        <h3 class="text-xl font-semibold text-gray-800">天人合一</h3>
+                                    </div>
+                                    <p class="text-gray-700">
+                                        强调人与自然的统一性，认为人的生命活动规律与自然界的变化规律是一致的，人的健康与疾病和自然环境密切相关。
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-neutral p-6 rounded-lg hover:shadow-md transition-shadow">
+                                    <div class="flex items-center mb-4">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                            <i class="fa fa-user text-primary"></i>
+                                        </div>
+                                        <h3 class="text-xl font-semibold text-gray-800">整体观念</h3>
+                                    </div>
+                                    <p class="text-gray-700">
+                                        认为人体是一个有机的整体，各个脏腑、组织、器官之间相互联系、相互影响，同时也强调精神与肉体的统一。
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-neutral p-6 rounded-lg hover:shadow-md transition-shadow">
+                                    <div class="flex items-center mb-4">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                                            <i class="fa fa-stethoscope text-primary"></i>
+                                        </div>
+                                        <h3 class="text-xl font-semibold text-gray-800">辨证论治</h3>
+                                    </div>
+                                    <p class="text-gray-700">
+                                        强调诊断疾病要综合分析，根据不同的病因、病位、病性以及发展阶段，采取相应的治疗方法，为中医临床治疗奠定了基础。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 经典名句 -->
+                        <div class="mb-12 scroll-animate delay-300">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">经典名句</h2>
+                            
+                            <div class="space-y-6">
+                                <div class="quote-block pl-6 py-2 text-gray-700">
+                                    <p>"不治已病治未病，不治已乱治未乱。"</p>
+                                    <p class="mt-2 text-right text-gray-600">——《素问·四气调神大论》</p>
+                                </div>
+                                
+                                <div class="quote-block pl-6 py-2 text-gray-700">
+                                    <p>"怒则气上，喜则气缓，悲则气消，恐则气下，寒则气收，炅则气泄，惊则气乱，劳则气耗，思则气结。"</p>
+                                    <p class="mt-2 text-right text-gray-600">——《素问·举痛论》</p>
+                                </div>
+                                
+                                <div class="quote-block pl-6 py-2 text-gray-700">
+                                    <p>"阴平阳秘，精神乃治；阴阳离决，精气乃绝。"</p>
+                                    <p class="mt-2 text-right text-gray-600">——《素问·生气通天论》</p>
+                                </div>
+                                
+                                <div class="quote-block pl-6 py-2 text-gray-700">
+                                    <p>"春夏养阳，秋冬养阴，以从其根。"</p>
+                                    <p class="mt-2 text-right text-gray-600">——《素问·四气调神大论》</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 现代价值 -->
+                        <div class="scroll-animate delay-400">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">现代价值</h2>
+                            <div class="prose prose-lg text-gray-700 max-w-none">
+                                <p class="mb-4">
+                                    《黄帝内经》作为中医理论体系的奠基之作，至今仍对中医临床实践具有重要的指导意义。其整体观念、辨证论治的思想，以及对养生保健的重视，与现代预防医学、整体医学的理念不谋而合。
+                                </p>
+                                <p class="mb-4">
+                                    在现代社会，《黄帝内经》中的养生思想越来越受到人们的重视。其倡导的"顺应自然"、"调和阴阳"、"动静结合"等养生原则，为现代人应对亚健康状态、预防慢性病提供了宝贵的指导。
+                                </p>
+                                <p>
+                                    同时，《黄帝内经》中的经络学说、脏腑理论等为现代中医诊断和治疗技术的发展提供了理论基础，在针灸、推拿、中药等领域得到广泛应用，并逐渐被现代科学研究证实其有效性。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧边栏 -->
+                    <div class="lg:w-1/3">
+                        <!-- 章节导航 -->
+                        <div class="bg-neutral rounded-lg p-6 mb-8 scroll-animate delay-100">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">主要章节</h3>
+                            <div class="space-y-1 max-h-96 overflow-y-auto pr-2">
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    《素问》卷一：上古天真论篇
+                                </a>
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    《素问》卷二：四气调神大论篇
+                                </a>
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    《素问》卷三：生气通天论篇
+                                </a>
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    《素问》卷四：金匮真言论篇
+                                </a>
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    《素问》卷五：阴阳应象大论篇
+                                </a>
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    《灵枢》卷一：九针十二原第一
+                                </a>
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    《灵枢》卷二：本输第二
+                                </a>
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    《灵枢》卷三：小针解第三
+                                </a>
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    《灵枢》卷四：邪气脏腑病形第四
+                                </a>
+                                <a href="#" class="chapter-item block px-3 py-2 rounded border-l-2 border-transparent hover:border-primary transition-colors">
+                                    <span class="text-gray-500">查看更多章节...</span>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- 相关推荐 -->
+                        <div class="bg-neutral rounded-lg p-6 scroll-animate delay-200">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">相关经典</h3>
+                            <div class="space-y-4">
+                                <a href="#" class="group">
+                                    <div class="flex gap-3">
+                                        <div class="w-20 h-20 rounded overflow-hidden flex-shrink-0">
+                                            <img src="《伤寒论》封面.png" alt="伤寒论" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800 group-hover:text-primary transition-colors">伤寒论</h4>
+                                            <p class="text-sm text-gray-600 mt-1">东汉张仲景所著，确立辨证论治原则</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                
+                                <a href="#" class="group">
+                                    <div class="flex gap-3">
+                                        <div class="w-20 h-20 rounded overflow-hidden flex-shrink-0">
+                                            <img src="《本草纲目》封面图.png" alt="本草纲目" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800 group-hover:text-primary transition-colors">本草纲目</h4>
+                                            <p class="text-sm text-gray-600 mt-1">明代李时珍编著，收录药物1892种</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                
+                                <a href="#" class="group">
+                                    <div class="flex gap-3">
+                                        <div class="w-20 h-20 rounded overflow-hidden flex-shrink-0">
+                                            <img src="《千金要方》封面图.png" alt="千金要方" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800 group-hover:text-primary transition-colors">千金要方</h4>
+                                            <p class="text-sm text-gray-600 mt-1">唐代孙思邈所著，集唐代以前医学之大成</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <a href="#" class="text-2xl font-bold flex items-center">
+                        <i class="fa fa-heartbeat mr-2"></i>北京理工大学附属中医医院
+                    </a>
+                    <p class="text-gray-400 mt-2">地址：北京市海淀区中关村南大街5号 | 电话：010-12345678 | 邮箱：hospital@bit.edu.cn</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weixin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weibo text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-youtube-play text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>© 2023 北京理工大学附属中医医院 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary/90 z-50">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript 交互逻辑 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单切换
+            const menuBtn = document.getElementById('menuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                // 切换图标
+                const icon = menuBtn.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            });
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            
+            // 滚动动画元素
+            const animateElements = document.querySelectorAll('.scroll-animate');
+            
+            // 检查元素是否在视口中
+            function checkInView() {
+                animateElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementBottom = element.getBoundingClientRect().bottom;
+                    const isVisible = (elementTop < window.innerHeight - 100) && (elementBottom > 0);
+                    
+                    if (isVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+                
+                // 更新导航栏样式
+                if (window.scrollY > 100) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+                
+                // 更新返回顶部按钮显示状态
+                toggleBackToTop();
+                
+                // 更新滚动进度条
+                updateScrollProgress();
+            }
+            
+            // 更新滚动进度条
+            function updateScrollProgress() {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.getElementById("scrollProgress").style.width = scrolled + "%";
+            }
+            
+            // 返回顶部按钮
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            function toggleBackToTop() {
+                if (window.scrollY > 500) {
+                    backToTopBtn.classList.remove('opacity-0', 'invisible');
+                    backToTopBtn.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopBtn.classList.add('opacity-0', 'invisible');
+                    backToTopBtn.classList.remove('opacity-100', 'visible');
+                }
+            }
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 初始化检查
+            checkInView();
+            
+            // 监听滚动事件
+            window.addEventListener('scroll', checkInView);
+        });
+    </script>
+</body>
+</html>

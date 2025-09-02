@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专家介绍 - 北京理工大学附属中医医院</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#C1272D', // 中医红
+                        secondary: '#D4AF37', // 金色
+                        tertiary: '#1A5653', // 中医绿
+                        neutral: '#F9F5F1', // 米白色背景
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'system-ui', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 滚动动画样式 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 延迟动画类 */
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
+        .delay-600 { transition-delay: 0.6s; }
+        .delay-700 { transition-delay: 0.7s; }
+        .delay-800 { transition-delay: 0.8s; }
+        .delay-900 { transition-delay: 0.9s; }
+        
+        /* 滚动进度条 */
+        #scrollProgress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background-color: #C1272D;
+            z-index: 100;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+        
+        /* 导航栏滚动效果 */
+        .navbar-scrolled {
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* 科室按钮选中效果 */
+        .dept-btn.active {
+            background-color: #C1272D;
+            color: white;
+        }
+        
+        /* 隐藏滚动条但保留功能 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-neutral font-sans">
+    <!-- 滚动进度条 -->
+    <div id="scrollProgress"></div>
+
+    <!-- 导航栏 -->
+    <header class="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <i class="fa fa-heartbeat text-primary text-2xl mr-2"></i>
+                <span class="text-xl font-bold text-gray-800">北京理工大学附属中医医院</span>
+            </a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="index.html#about" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    医院简介
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="expert.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    专家介绍
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="classroom.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    中医小课堂
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="treasury.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    中医宝典
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </nav>
+            <button class="md:hidden text-gray-700 focus:outline-none" id="menuBtn">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white w-full shadow-md absolute top-full left-0" id="mobileMenu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="index.html#about" class="text-gray-700 hover:text-primary py-2 transition-colors">医院简介</a>
+                <a href="expert.html" class="text-primary font-semibold py-2 transition-colors">专家介绍</a>
+                <a href="classroom.html" class="text-gray-700 hover:text-primary py-2 transition-colors">中医小课堂</a>
+                <a href="patient_guide.html" class="text-gray-700 hover:text-primary py-2 transition-colors">线上问诊指南</a>
+                <a href="doctor_guide.html" class="text-gray-700 hover:text-primary py-2 transition-colors">医生操作指南</a>
+                <a href="db_guide.html" class="text-gray-700 hover:text-primary py-2 transition-colors">数据库管理指南</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面头部 -->
+    <section class="pt-16 md:pt-20 h-64 bg-cover bg-center relative" style="background-image: url('https://picsum.photos/id/1080/1920/300?random=20');">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="container mx-auto px-4 h-full flex flex-col justify-center relative z-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-white text-shadow">专家介绍</h1>
+            <p class="text-white text-shadow">汇聚中医名家，提供专业诊疗服务</p>
+        </div>
+    </section>
+
+    <!-- 专家介绍内容 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <!-- 搜索和科室筛选 -->
+                <div class="mb-12 scroll-animate">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
+                        <div class="mb-6 md:mb-0">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">查找专家</h2>
+                            <p class="text-gray-600">根据科室或姓名查找相关专家信息</p>
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="searchInput" placeholder="请输入医生姓名" class="w-full md:w-72 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors shadow-sm">
+                            <button id="searchBtn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary">
+                                <i class="fa fa-search text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 科室标签 -->
+                    <div class="flex flex-wrap gap-3 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+                        <button class="dept-btn active px-5 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap" data-dept="all">全部科室</button>
+                        <button class="dept-btn px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition-colors whitespace-nowrap" data-dept="内科">内科</button>
+                        <button class="dept-btn px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition-colors whitespace-nowrap" data-dept="外科">外科</button>
+                        <button class="dept-btn px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition-colors whitespace-nowrap" data-dept="妇科">妇科</button>
+                        <button class="dept-btn px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition-colors whitespace-nowrap" data-dept="儿科">儿科</button>
+                        <button class="dept-btn px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition-colors whitespace-nowrap" data-dept="针灸科">针灸科</button>
+                        <button class="dept-btn px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition-colors whitespace-nowrap" data-dept="推拿科">推拿科</button>
+                        <button class="dept-btn px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition-colors whitespace-nowrap" data-dept="康复科">康复科</button>
+                        <button class="dept-btn px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition-colors whitespace-nowrap" data-dept="骨伤科">骨伤科</button>
+                        <button class="dept-btn px-5 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition-colors whitespace-nowrap" data-dept="皮肤科">皮肤科</button>
+                    </div>
+                </div>
+                
+                <!-- 医生列表 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="doctorList">
+                    <!-- 内科医生 -->
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-100" data-department="内科" data-name="张明远">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('内科头像1.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">张明远</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 内科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长中医辨证治疗心脑血管疾病、脾胃病、慢性疲劳综合征等内科杂病，运用经方治疗疑难病症经验丰富。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-200" data-department="内科" data-name="刘德仁">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('内科头像2.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">刘德仁</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">副主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 内科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                专注于呼吸系统疾病的中医治疗，对哮喘、慢性支气管炎、肺气肿等疾病有独特治疗方法，临床疗效显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-300" data-department="内科" data-name="周海波">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('内科头像3.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">周海波</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主治医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 内科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长消化系统疾病治疗，尤其对肝炎、肝硬化、慢性胃炎、胃溃疡等疾病有深入研究，采用中西医结合疗法效果显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-400" data-department="内科" data-name="陈梦琪">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('内科头像4.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">陈梦琪</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">副主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 内科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                致力于内分泌疾病的中医调理，对糖尿病、甲状腺疾病、更年期综合征等有丰富治疗经验，注重整体调理和生活方式指导。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 外科医生 -->
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-100" data-department="外科" data-name="赵文涛">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('外科头像1.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">赵文涛</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">副主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 外科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                中西医结合治疗外科常见疾病，如疮疡、乳腺疾病、周围血管病等，在手术治疗的同时配合中药调理，促进术后康复。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-200" data-department="外科" data-name="黄志强">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('外科头像2.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">黄志强</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 外科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长腹部外科手术，尤其在胆囊疾病、阑尾炎、疝气等疾病的微创治疗方面有丰富经验，术后结合中医调理减少并发症。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-300" data-department="外科" data-name="吴建国">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('外科头像3.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">吴建国</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主治医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 外科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                专注于肛肠外科疾病的诊治，采用中医外治法与手术相结合的方式治疗痔疮、肛瘘、肛裂等疾病，痛苦小、恢复快。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 妇科医生 -->
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-400" data-department="妇科" data-name="李慧兰">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('妇科头像1.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">李慧兰</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">副主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 妇科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                中西医结合治疗妇科常见病、多发病及疑难病，如月经不调、不孕症、更年期综合征等，尤擅中药调理女性内分泌。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-500" data-department="妇科" data-name="张美玲">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('妇科头像2.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">张美玲</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 妇科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长治疗妇科炎症、子宫肌瘤、卵巢囊肿等疾病，采用中药内服外治结合的方法，疗效显著，深受患者信赖。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-600" data-department="妇科" data-name="王丽华">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('妇科头像3.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">王丽华</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主治医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 妇科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                专注于女性不孕不育的诊治，运用中医辨证施治理论，结合现代医学技术，为众多家庭带来福音。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 儿科医生 -->
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-100" data-department="儿科" data-name="刘思琪">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('儿科头像1.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">刘思琪</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主治医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 儿科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长运用中医外治法（如小儿推拿、中药贴敷）治疗小儿感冒、咳嗽、消化不良、厌食等常见疾病，绿色疗法深受家长信赖。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-200" data-department="儿科" data-name="孙建国">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('儿科头像2.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">孙建国</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 儿科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                从事儿科临床工作30余年，擅长治疗小儿呼吸系统疾病、神经系统疾病及疑难杂症，用药精准，疗效显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-300" data-department="儿科" data-name="郑小燕">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('儿科头像3.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">郑小燕</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">副主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 儿科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                专注于小儿消化系统疾病和过敏性疾病的诊治，采用中医辨证施治，配合小儿推拿，疗效显著，深受患儿家长好评。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 针灸科医生 -->
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-400" data-department="针灸科" data-name="王建国">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('针灸科头像1.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">王建国</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 针灸科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                运用针灸、推拿、拔罐等传统中医疗法治疗颈肩腰腿痛、神经系统疾病、运动损伤等，临床经验丰富，疗效显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-500" data-department="针灸科" data-name="林小婷">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('针灸科头像2.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">林小婷</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主治医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 针灸科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长针灸美容、减肥，治疗面瘫、失眠、头痛等病症，运用腹针、耳针等特殊针法，效果显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-600" data-department="针灸科" data-name="陈光明">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('针灸科头像3.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">陈光明</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">副主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 针灸科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                专注于神经系统疾病的针灸治疗，对中风后遗症、帕金森病、多发性硬化等有深入研究，疗效显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 推拿科医生 -->
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-700" data-department="推拿科" data-name="黄小龙">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('推拿科头像1.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">黄小龙</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 推拿科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                精通各种推拿手法，擅长治疗颈椎病、腰椎间盘突出症、肩周炎等筋骨疾病，手法独特，疗效显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-800" data-department="推拿科" data-name="赵明">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('推拿科头像2.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">赵明</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主治医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 推拿科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长小儿推拿，治疗小儿斜颈、消化不良、便秘等疾病，同时对成人亚健康调理有丰富经验。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 康复科医生 -->
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-100" data-department="康复科" data-name="陈静">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('康复科头像1.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">陈静</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 康复科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                结合中医康复理论与现代康复技术，治疗中风后遗症、脊髓损伤、运动损伤等导致的功能障碍，制定个性化康复方案。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-200" data-department="康复科" data-name="林建华">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('康复科头像2.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">林建华</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">副主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 康复科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长骨伤康复治疗，对骨折术后功能恢复、关节炎、骨质疏松等疾病的康复有丰富经验，结合中药调理效果显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-300" data-department="康复科" data-name="徐小丽">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('康复科头像3.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">徐小丽</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主治医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 康复科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                专注于神经系统疾病的康复治疗，对帕金森病、老年痴呆、小儿脑瘫等疾病的康复有深入研究，采用综合康复疗法。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 骨伤科医生 -->
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-400" data-department="骨伤科" data-name="郑国强">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('骨伤科头像1.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">郑国强</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 骨伤科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                中西医结合治疗骨折、脱位、筋骨疼痛等疾病，擅长手法复位和小夹板固定，配合中药内服外敷，疗效显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-500" data-department="骨伤科" data-name="杨建军">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('骨伤科头像2.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">杨建军</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">副主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 骨伤科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长治疗颈肩腰腿痛、骨关节炎、骨质疏松等疾病，采用针刀、中药、理疗等综合疗法，效果显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 皮肤科医生 -->
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-600" data-department="皮肤科" data-name="吴美玲">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('皮肤科头像1.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">吴美玲</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 皮肤科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                擅长中西医结合治疗各种皮肤病，如湿疹、银屑病、痤疮、荨麻疹等，采用内服外治相结合的方法，疗效显著。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-card border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-700" data-department="皮肤科" data-name="何志强">
+                        <div class="h-64 bg-cover bg-center" style="background-image: url('皮肤科头像2.png');"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-semibold text-gray-800">何志强</h3>
+                                <span class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full">副主任医师</span>
+                            </div>
+                            <p class="text-gray-600 mb-4 flex items-center">
+                                <i class="fa fa-stethoscope text-primary mr-2"></i> 皮肤科
+                            </p>
+                            <p class="text-gray-700 mb-4">
+                                专注于色素性皮肤病和过敏性皮肤病的诊治，对白癜风、黄褐斑、激素依赖性皮炎等有独特治疗方法。
+                            </p>
+                            <a href="#" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                                查看详情 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 分页 -->
+                <div class="mt-12 flex justify-center scroll-animate delay-300">
+                    <nav class="inline-flex rounded-md shadow">
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fa fa-chevron-left mr-1"></i> 上一页
+                        </a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-primary text-sm font-medium text-white">
+                            1
+                        </a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            2
+                        </a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            3
+                        </a>
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                            ...
+                        </span>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            8
+                        </a>
+                        <a href="#" class="relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            下一页 <i class="fa fa-chevron-right ml-1"></i>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <a href="#" class="text-2xl font-bold flex items-center">
+                        <i class="fa fa-heartbeat mr-2"></i>北京理工大学附属中医医院
+                    </a>
+                    <p class="text-gray-400 mt-2">地址：北京市海淀区中关村南大街5号 | 电话：010-12345678 | 邮箱：hospital@bit.edu.cn</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weixin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weibo text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-youtube-play text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>© 2023 北京理工大学附属中医医院 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary/90 z-50">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript 交互逻辑 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单切换
+            const menuBtn = document.getElementById('menuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                // 切换图标
+                const icon = menuBtn.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            });
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            
+            // 滚动动画元素
+            const animateElements = document.querySelectorAll('.scroll-animate');
+            
+            // 医生卡片
+            const doctorCards = document.querySelectorAll('.doctor-card');
+            // 搜索框和按钮
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            // 科室按钮
+            const deptBtns = document.querySelectorAll('.dept-btn');
+            
+            // 当前筛选条件
+            let currentDept = 'all';
+            let currentSearch = '';
+            
+            // 检查元素是否在视口中
+            function checkInView() {
+                animateElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementBottom = element.getBoundingClientRect().bottom;
+                    const isVisible = (elementTop < window.innerHeight - 100) && (elementBottom > 0);
+                    
+                    if (isVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+                
+                // 更新导航栏样式
+                if (window.scrollY > 100) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+                
+                // 更新返回顶部按钮显示状态
+                toggleBackToTop();
+                
+                // 更新滚动进度条
+                updateScrollProgress();
+            }
+            
+            // 更新滚动进度条
+            function updateScrollProgress() {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.getElementById("scrollProgress").style.width = scrolled + "%";
+            }
+            
+            // 返回顶部按钮
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            function toggleBackToTop() {
+                if (window.scrollY > 500) {
+                    backToTopBtn.classList.remove('opacity-0', 'invisible');
+                    backToTopBtn.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopBtn.classList.add('opacity-0', 'invisible');
+                    backToTopBtn.classList.remove('opacity-100', 'visible');
+                }
+            }
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 筛选医生
+            function filterDoctors() {
+                doctorCards.forEach(card => {
+                    const dept = card.getAttribute('data-department');
+                    const name = card.getAttribute('data-name').toLowerCase();
+                    
+                    // 检查科室筛选
+                    const deptMatch = currentDept === 'all' || dept === currentDept;
+                    // 检查姓名搜索
+                    const nameMatch = currentSearch === '' || name.includes(currentSearch.toLowerCase());
+                    
+                    // 显示或隐藏卡片
+                    if (deptMatch && nameMatch) {
+                        card.style.display = 'block';
+                        // 重新检查动画可见性
+                        setTimeout(() => {
+                            checkInView();
+                        }, 10);
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+            
+            // 科室筛选按钮交互
+            deptBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // 更新按钮样式
+                    deptBtns.forEach(b => {
+                        b.classList.remove('active', 'bg-primary', 'text-white');
+                        b.classList.add('bg-gray-200', 'hover:bg-gray-300');
+                    });
+                    btn.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+                    btn.classList.add('active', 'bg-primary', 'text-white');
+                    
+                    // 更新当前科室筛选条件
+                    currentDept = btn.getAttribute('data-dept');
+                    filterDoctors();
+                });
+            });
+            
+            // 搜索功能
+            function handleSearch() {
+                currentSearch = searchInput.value.trim();
+                filterDoctors();
+            }
+            
+            searchBtn.addEventListener('click', handleSearch);
+            searchInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+            
+            // 初始化检查
+            checkInView();
+            
+            // 监听滚动事件
+            window.addEventListener('scroll', checkInView);
+        });
+    </script>
+</body>
+</html>

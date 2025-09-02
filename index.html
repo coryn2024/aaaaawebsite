@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北京理工大学附属中医医院</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#C1272D', // 中医红
+                        secondary: '#D4AF37', // 金色
+                        tertiary: '#1A5653', // 中医绿
+                        neutral: '#F9F5F1', // 米白色背景
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'system-ui', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            }
+            .text-shadow-lg {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            }
+            .bg-pattern {
+                background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d1bea8' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            }
+        }
+    </style>
+    <style>
+        /* 防止title换行 */
+        title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 滚动动画样式 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 横幅滚动动画 */
+        .scroll-banner {
+            animation: scrollBanner 40s linear infinite;
+        }
+        
+        @keyframes scrollBanner {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .scroll-banner:hover {
+            animation-play-state: paused;
+        }
+        
+        /* 文字渐变动画 */
+        .text-fade-in {
+            opacity: 0;
+            animation: fadeIn 1.2s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 延迟动画类 */
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
+        .delay-600 { transition-delay: 0.6s; }
+        
+        /* 滚动进度条 */
+        #scrollProgress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background-color: #C1272D;
+            z-index: 100;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+        
+        /* 导航栏滚动效果 */
+        .navbar-scrolled {
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-neutral font-sans bg-pattern">
+    <!-- 滚动进度条 -->
+    <div id="scrollProgress"></div>
+    <!-- 导航栏 -->
+    <header class="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <i class="fa fa-heartbeat text-primary text-2xl mr-2"></i>
+                <span class="text-xl font-bold text-gray-800">北京理工大学附属中医医院</span>
+            </a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#about" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    医院简介
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="expert.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    专家介绍
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="classroom.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    中医小课堂
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="treasury.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    中医宝典
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </nav>
+            <button class="md:hidden text-gray-700 focus:outline-none" id="menuBtn">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white w-full shadow-md absolute top-full left-0" id="mobileMenu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="#about" class="text-gray-700 hover:text-primary py-2 transition-colors">医院简介</a>
+                <a href="expert.html" class="text-gray-700 hover:text-primary py-2 transition-colors">专家介绍</a>
+                <a href="classroom.html" class="text-gray-700 hover:text-primary py-2 transition-colors">中医小课堂</a>
+            </div>
+        </div>
+    </header>
+    <!-- 主Banner - 中医医院全景+中药元素 -->
+    <section class="pt-16 md:pt-20 h-screen flex items-center bg-cover bg-center relative" style="background-image: url('building.png'); background-position: center 30%;">
+        <div class="absolute inset-0 bg-black/30"></div>
+        <div class="container mx-auto px-4 h-full flex flex-col justify-center relative z-10">
+            <div class="max-w-3xl">
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white text-shadow-lg text-fade-in">北京理工大学附属中医医院</h1>
+                <p class="text-xl md:text-2xl mb-8 text-white text-shadow max-w-2xl text-fade-in delay-200">传承中医精髓，融合现代科技，守护人民健康</p>
+            </div>
+        </div>
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+            <a href="#motto" class="flex flex-col items-center">
+                <span class="mb-2 text-shadow">向下滚动</span>
+                <i class="fa fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+    <!-- 校训/院训区域 - 中医文化墙+古籍研读 -->
+    <section id="motto" class="py-16 md:py-24 bg-white relative overflow-hidden">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="scroll-animate">
+                        <div class="relative">
+                            <img src="首页主Banner背景.png" alt="中医文化" class="rounded-lg shadow-xl w-full h-auto object-cover">
+                            <div class="absolute -bottom-6 -right-6 bg-primary text-white p-6 rounded-lg shadow-lg hidden md:block">
+                                <p class="text-lg font-serif italic">"医者仁心，大医精诚"</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scroll-animate delay-200">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 font-serif">德以明理，学以精工</h2>
+                        <div class="w-20 h-1 bg-primary mb-8"></div>
+                        <p class="text-gray-700 mb-6 text-lg leading-relaxed">
+                            我院秉承"德以明理，学以精工"的院训，坚持"以患者为中心"的服务理念，将传统中医药文化与现代医学技术相结合，
+                            致力于为患者提供优质、高效、便捷的医疗服务。
+                        </p>
+                        <p class="text-gray-700 mb-8 text-lg leading-relaxed">
+                            多年来，医院始终坚持中医药特色发展道路，不断提升医疗服务水平，积极开展中医药科研创新，
+                            为中医药事业的传承与发展贡献力量。
+                        </p>
+                        <a href="#about" class="inline-flex items-center text-primary font-medium hover:underline">
+                            了解更多医院历史 <i class="fa fa-long-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 滚动海报区域 - 中医主题场景匹配 -->
+    <section class="py-12 md:py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 scroll-animate">医院动态</h2>
+            
+            <div class="relative overflow-hidden">
+                <div class="flex scroll-banner space-x-6 md:space-x-8 pb-4">
+                    <!-- 海报1 - 中医药文化节（中药材+器具） -->
+                    <div class="w-72 h-48 md:w-96 md:h-64 flex-shrink-0 relative rounded-lg overflow-hidden shadow-md group">
+                        <img src="中医药文化节海报.png" alt="中医药文化节" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+                            <h3 class="text-white font-bold text-lg">中医药文化节</h3>
+                            <p class="text-white/90 text-sm">5月20日-5月25日</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 海报2 - 春季养生讲座（养生食材+讲座场景） -->
+                    <div class="w-72 h-48 md:w-96 md:h-64 flex-shrink-0 relative rounded-lg overflow-hidden shadow-md group">
+                        <img src="春季养生讲座海报.png" alt="春季养生讲座" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+                            <h3 class="text-white font-bold text-lg">春季养生讲座</h3>
+                            <p class="text-white/90 text-sm">4月15日 上午9:00</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 海报3 - 治未病中心成立（体质辨识场景） -->
+                    <div class="w-72 h-48 md:w-96 md:h-64 flex-shrink-0 relative rounded-lg overflow-hidden shadow-md group">
+                        <img src="治未病中心成立海报.png" alt="治未病中心成立" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+                            <h3 class="text-white font-bold text-lg">治未病中心成立</h3>
+                            <p class="text-white/90 text-sm">提供个性化健康管理</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 海报4 - 社区义诊活动（医生义诊场景） -->
+                    <div class="w-72 h-48 md:w-96 md:h-64 flex-shrink-0 relative rounded-lg overflow-hidden shadow-md group">
+                        <img src="社区义诊活动海报.png" alt="社区义诊活动" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+                            <h3 class="text-white font-bold text-lg">社区义诊活动</h3>
+                            <p class="text-white/90 text-sm">每月第二个周六</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 海报5 - 院训宣传（书法+文化墙） -->
+                    <div class="w-72 h-48 md:w-96 md:h-64 flex-shrink-0 relative rounded-lg overflow-hidden shadow-md group">
+                        <img src="院训宣传海报.png" alt="德以明理，学以精工" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+                            <h3 class="text-white font-bold text-lg">德以明理，学以精工</h3>
+                            <p class="text-white/90 text-sm">院训精神学习活动</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 重复海报实现循环 -->
+                    <div class="w-72 h-48 md:w-96 md:h-64 flex-shrink-0 relative rounded-lg overflow-hidden shadow-md group">
+                        <img src="中医药文化节海报.png" alt="中医药文化节" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+                            <h3 class="text-white font-bold text-lg">中医药文化节</h3>
+                            <p class="text-white/90 text-sm">5月20日-5月25日</p>
+                        </div>
+                    </div>
+                    
+                    <div class="w-72 h-48 md:w-96 md:h-64 flex-shrink-0 relative rounded-lg overflow-hidden shadow-md group">
+                        <img src="春季养生讲座海报.png" alt="春季养生讲座" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+                            <h3 class="text-white font-bold text-lg">春季养生讲座</h3>
+                            <p class="text-white/90 text-sm">4月15日 上午9:00</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 滚动指示器 -->
+                <div class="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-4 md:translate-x-0">
+                    <button class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center text-gray-700 focus:outline-none">
+                        <i class="fa fa-chevron-left"></i>
+                    </button>
+                </div>
+                <div class="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-4 md:translate-x-0">
+                    <button class="w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center text-gray-700 focus:outline-none">
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 医院简介 -->
+    <section id="about" class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 scroll-animate">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 font-serif">医院简介</h2>
+                <div class="w-20 h-1 bg-primary mx-auto"></div>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="bg-neutral rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow scroll-animate delay-100">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa fa-history text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">历史沿革</h3>
+                        <p class="text-gray-600 text-center">
+                            始建于1956年，历经六十余载风雨历程，逐步发展成为集医疗、教学、科研于一体的综合性中医医院。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-neutral rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow scroll-animate delay-300">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa fa-user-md text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">师资力量</h3>
+                        <p class="text-gray-600 text-center">
+                            拥有高级职称专家56名，博士生导师12名，硕士生导师28名，形成了一支结构合理、医术精湛的人才队伍。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-neutral rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow scroll-animate delay-500">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa fa-stethoscope text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">医疗特色</h3>
+                        <p class="text-gray-600 text-center">
+                            开设32个临床科室，其中国家级重点专科3个，省级重点专科6个，在多个疾病领域形成独特诊疗优势。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="text-gray-700 leading-relaxed space-y-6 scroll-animate">
+                    <p class="text-lg">
+                        北京理工大学附属中医医院始建于1956年，是一所集医疗、教学、科研、预防、保健、康复为一体的现代化综合性中医医院。
+                        医院占地面积5.2万平方米，建筑面积12.8万平方米，开放床位800张。
+                    </p>
+                    <p class="text-lg">
+                        医院秉承"德以明理，学以精工"的院训，致力于将传统中医精华与现代医学技术相结合，为广大患者提供优质、高效、便捷的医疗服务。
+                        医院拥有一支高素质的中医药人才队伍，其中高级职称专家56名，中级职称128名。
+                    </p>
+                    <p class="text-lg">
+                        开设了内科、外科、妇科、儿科、针灸科、推拿科、康复科等多个临床科室，配备了先进的医疗设备，如超导磁共振成像系统、
+                        螺旋CT、数字化X光机等，为精准诊断和治疗提供了有力保障。
+                    </p>
+                    <p class="text-lg">
+                        医院注重中医药文化传承与创新，积极开展中医药科研工作，承担了多项国家级、省部级科研项目，在中医药防治心脑血管疾病、
+                        肿瘤、糖尿病等方面形成了鲜明的中医特色和优势，多项研究成果达到国内领先水平。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 特色科室 - 中医诊疗场景匹配 -->
+    <section class="py-16 md:py-24 bg-tertiary/5">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 scroll-animate">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 font-serif">特色科室</h2>
+                <div class="w-20 h-1 bg-primary mx-auto"></div>
+                <p class="text-gray-600 mt-4 max-w-2xl mx-auto">我院拥有多个国家级、省级重点专科，形成了鲜明的中医特色和优势</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- 科室1 - 针灸科（针灸治疗场景） -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-100">
+                    <div class="h-48 overflow-hidden">
+                        <img src="针灸科图片.png" alt="针灸科" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">针灸科</h3>
+                        <p class="text-gray-600 mb-4">
+                            国家级重点专科，运用针灸、艾灸、拔罐等传统疗法，结合现代康复技术，治疗神经系统疾病、运动系统疾病等。
+                        </p>
+                        <a href="expert.html" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                            查看专家 <i class="fa fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 科室2 - 脾胃病科（中药调理场景） -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-300">
+                    <div class="h-48 overflow-hidden">
+                        <img src="脾胃病科图片.png" alt="脾胃病科" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">脾胃病科</h3>
+                        <p class="text-gray-600 mb-4">
+                            省级重点专科，擅长运用中医辨证论治方法治疗慢性胃炎、消化性溃疡、功能性胃肠病等消化系统疾病。
+                        </p>
+                        <a href="expert.html" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                            查看专家 <i class="fa fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 科室3 - 骨伤科（正骨/推拿场景） -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animate delay-500">
+                    <div class="h-48 overflow-hidden">
+                        <img src="骨伤科图片.png" alt="骨伤科" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">骨伤科</h3>
+                        <p class="text-gray-600 mb-4">
+                            中西医结合治疗骨折、脱位、颈椎病、腰椎间盘突出症等骨伤科疾病，疗效显著，深受患者好评。
+                        </p>
+                        <a href="expert.html" class="text-primary font-medium hover:text-primary/80 inline-flex items-center">
+                            查看专家 <i class="fa fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 子网站入口 -->
+    <section class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16 scroll-animate">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 font-serif">快速导航</h2>
+                <div class="w-20 h-1 bg-primary mx-auto"></div>
+                <p class="text-gray-600 mt-4 max-w-2xl mx-auto">便捷访问医院各类服务与信息</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto justify-items-center">
+                <a href="expert.html" class="block bg-neutral rounded-lg shadow-sm p-6 hover:shadow-md transition-all transform hover:-translate-y-2 scroll-animate delay-100 group">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto group-hover:bg-primary/20 transition-colors">
+                        <i class="fa fa-user-md text-2xl text-primary group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 text-center">专家介绍</h3>
+                </a>
+                
+                <a href="classroom.html" class="block bg-neutral rounded-lg shadow-sm p-6 hover:shadow-md transition-all transform hover:-translate-y-2 scroll-animate delay-200 group">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto group-hover:bg-primary/20 transition-colors">
+                        <i class="fa fa-book text-2xl text-primary group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 text-center">中医小课堂</h3>
+                </a>
+                <a href="treasury.html" class="block bg-neutral rounded-lg shadow-sm p-6 hover:shadow-md transition-all transform hover:-translate-y-2 scroll-animate delay-300 group">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 mx-auto group-hover:bg-primary/20 transition-colors">
+                        <i class="fa fa-book text-2xl text-primary group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 text-center">中医宝典</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+    <!-- 联系信息 -->
+    <section class="py-16 md:py-24 bg-gray-800 text-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+                <div class="scroll-animate">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fa fa-map-marker text-primary mr-3"></i> 医院地址
+                    </h3>
+                    <p class="mb-4 text-gray-300">北京市海淀区中关村南大街5号</p>
+                    <p class="mb-4 text-gray-300">北京理工大学院内东侧</p>
+                    <div class="mt-6 h-48 bg-gray-700 rounded-lg overflow-hidden">
+                        <!-- 医院环境地图 -->
+                        <img src="医院环境地图.png" alt="医院地图" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                
+                <div class="scroll-animate delay-200">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fa fa-phone text-primary mr-3"></i> 联系电话
+                    </h3>
+                    <div class="space-y-4 text-gray-300">
+                        <p class="flex items-start">
+                            <i class="fa fa-hospital-o text-primary mt-1 mr-3"></i>
+                            <span>总机：010-12345678</span>
+                        </p>
+                        <p class="flex items-start">
+                            <i class="fa fa-stethoscope text-primary mt-1 mr-3"></i>
+                            <span>急诊科：010-12345679</span>
+                        </p>
+                        <p class="flex items-start">
+                            <i class="fa fa-calendar-check-o text-primary mt-1 mr-3"></i>
+                            <span>预约挂号：010-12345680</span>
+                        </p>
+                        <p class="flex items-start">
+                            <i class="fa fa-envelope text-primary mt-1 mr-3"></i>
+                            <span>邮箱：hospital@bit.edu.cn</span>
+                        </p>
+                    </div>
+                    
+                    <h3 class="text-2xl font-bold mb-6 mt-10 flex items-center">
+                        <i class="fa fa-clock-o text-primary mr-3"></i> 门诊时间
+                    </h3>
+                    <div class="space-y-2 text-gray-300">
+                        <p>周一至周五：8:00 - 17:30</p>
+                        <p>周六至周日：8:30 - 16:30</p>
+                        <p>节假日：9:00 - 16:00（部分科室）</p>
+                    </div>
+                </div>
+                
+                <div class="scroll-animate delay-400">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fa fa-qrcode text-primary mr-3"></i> 扫码关注
+                    </h3>
+                    <p class="mb-4 text-gray-300">关注医院微信公众号，获取更多健康资讯和服务</p>
+                    <div class="bg-white p-4 inline-block rounded-lg mb-6">
+                        <!-- 中医风格二维码 -->
+                        <img src="微信公众号二维码图片.png" alt="微信公众号二维码" class="w-48 h-48 object-cover">
+                    </div>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-weixin"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-weibo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-youtube-play"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>© 2023 北京理工大学附属中医医院 版权所有 | 京ICP备12345678号-1</p>
+                <p class="mt-2 text-sm">地址：北京市海淀区中关村南大街5号 | 电话：010-12345678</p>
+            </div>
+        </div>
+    </footer>
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary/90 z-50">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+    <!-- JavaScript 交互逻辑 -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单切换
+            const menuBtn = document.getElementById('menuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                // 切换图标
+                const icon = menuBtn.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            });
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 100) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+                
+                // 滚动进度条
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.getElementById("scrollProgress").style.width = scrolled + "%";
+                
+                // 返回顶部按钮显示/隐藏
+                const backToTopBtn = document.getElementById('backToTop');
+                if (window.scrollY > 500) {
+                    backToTopBtn.classList.remove('opacity-0', 'invisible');
+                    backToTopBtn.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopBtn.classList.remove('opacity-100', 'visible');
+                    backToTopBtn.classList.add('opacity-0', 'invisible');
+                }
+                
+                // 滚动动画
+                const scrollElements = document.querySelectorAll('.scroll-animate');
+                scrollElements.forEach(el => {
+                    const elementTop = el.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        el.classList.add('visible');
+                    }
+                });
+            });
+            
+            // 返回顶部功能
+            document.getElementById('backToTop').addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 初始检查滚动元素
+            setTimeout(() => {
+                const scrollElements = document.querySelectorAll('.scroll-animate');
+                scrollElements.forEach(el => {
+                    const elementTop = el.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        el.classList.add('visible');
+                    }
+                });
+            }, 300);
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    // 如果是移动端菜单，点击后关闭
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        const icon = menuBtn.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                    
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

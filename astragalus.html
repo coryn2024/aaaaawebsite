@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄芪 - 中医宝典 - 北京理工大学附属中医医院</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#C1272D', // 中医红
+                        secondary: '#D4AF37', // 金色
+                        tertiary: '#1A5653', // 中医绿
+                        neutral: '#F9F5F1', // 米白色背景
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'system-ui', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 滚动动画样式 */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 延迟动画类 */
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+        .delay-500 { transition-delay: 0.5s; }
+        
+        /* 滚动进度条 */
+        #scrollProgress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background-color: #C1272D;
+            z-index: 100;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+        
+        /* 导航栏滚动效果 */
+        .navbar-scrolled {
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* 药材特性标签样式 */
+        .property-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        /* 图片查看器样式 */
+        .image-viewer {
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+        
+        .image-viewer:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-neutral font-sans">
+    <!-- 滚动进度条 -->
+    <div id="scrollProgress"></div>
+
+    <!-- 导航栏 -->
+    <header class="fixed w-full bg-white/95 backdrop-blur-sm shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center">
+                <i class="fa fa-heartbeat text-primary text-2xl mr-2"></i>
+                <span class="text-xl font-bold text-gray-800">北京理工大学附属中医医院</span>
+            </a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="index.html#about" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    医院简介
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="expert.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    专家介绍
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="classroom.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    中医小课堂
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="treasury.html" class="text-gray-700 hover:text-primary transition-colors duration-300 relative group">
+                    中医宝典
+                    <span class="absolute bottom-0 left-0 w-full h-0.5 bg-primary transition-all duration-300"></span>
+                </a>
+            </nav>
+            <button class="md:hidden text-gray-700 focus:outline-none" id="menuBtn">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white w-full shadow-md absolute top-full left-0" id="mobileMenu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="index.html#about" class="text-gray-700 hover:text-primary py-2 transition-colors">医院简介</a>
+                <a href="expert.html" class="text-gray-700 hover:text-primary py-2 transition-colors">专家介绍</a>
+                <a href="classroom.html" class="text-gray-700 hover:text-primary py-2 transition-colors">中医小课堂</a>
+                <a href="treasury.html" class="text-primary font-semibold py-2 transition-colors">中医宝典</a>
+                <a href="patient_guide.html" class="text-gray-700 hover:text-primary py-2 transition-colors">线上问诊指南</a>
+                <a href="doctor_guide.html" class="text-gray-700 hover:text-primary py-2 transition-colors">医生操作指南</a>
+                <a href="db_guide.html" class="text-gray-700 hover:text-primary py-2 transition-colors">数据库管理指南</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面头部 -->
+    <section class="pt-16 md:pt-20 h-64 bg-cover bg-center relative" style="background-image: url('https://picsum.photos/id/1060/1920/300?random=50');">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="container mx-auto px-4 h-full flex flex-col justify-center relative z-10">
+            <div class="flex items-center mb-2">
+                <a href="treasury.html" class="text-white/90 hover:text-white mr-2">
+                    <i class="fa fa-angle-left"></i> 中医宝典
+                </a>
+                <span class="text-white/50">/</span>
+                <span class="text-white/90 ml-2">中药材</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-white text-shadow">黄芪</h1>
+            <p class="text-white text-shadow mt-2">补气升阳，固表止汗，利水消肿</p>
+        </div>
+    </section>
+
+    <!-- 详情内容 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <!-- 左侧：药材图片 -->
+                    <div class="lg:col-span-1 scroll-animate">
+                        <div class="bg-neutral rounded-lg overflow-hidden shadow-md">
+                            <img src="huangqi1.png" alt="黄芪药材图" class="w-full h-auto image-viewer">
+                            <div class="p-4 text-center text-sm text-gray-600">
+                                黄芪药材实拍图
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 grid grid-cols-2 gap-4">
+                            <div class="bg-neutral rounded-lg overflow-hidden shadow-sm cursor-pointer image-viewer">
+                                <img src="huangqi2.png" alt="黄芪切片" class="w-full h-40 object-cover">
+                            </div>
+                            <div class="bg-neutral rounded-lg overflow-hidden shadow-sm cursor-pointer image-viewer">
+                                <img src="huangqi3.png" alt="黄芪植株" class="w-full h-40 object-cover">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 bg-neutral rounded-lg p-6 scroll-animate delay-100">
+                            <h3 class="text-lg font-semibold mb-4 flex items-center">
+                                <i class="fa fa-info-circle text-primary mr-2"></i> 基本信息
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <span class="text-gray-600">中文名称：</span>
+                                    <span class="font-medium">黄芪</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">拉丁学名：</span>
+                                    <span class="font-medium">Astragalus membranaceus</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">别名：</span>
+                                    <span>黄耆、绵黄芪、绵芪、北芪</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">药用部位：</span>
+                                    <span>干燥根</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">采收季节：</span>
+                                    <span>春、秋二季</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">产地：</span>
+                                    <span>山西、甘肃、黑龙江等地</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧：详细介绍 -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- 药材特性 -->
+                        <div class="scroll-animate">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fa fa-leaf text-tertiary mr-2"></i> 药材特性
+                            </h2>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="property-tag bg-tertiary/10 text-tertiary">补气药</span>
+                                <span class="property-tag bg-primary/10 text-primary">甘，温</span>
+                                <span class="property-tag bg-secondary/10 text-secondary">归肺、脾经</span>
+                                <span class="property-tag bg-gray-100 text-gray-700">多年生草本</span>
+                                <span class="property-tag bg-gray-100 text-gray-700">豆科植物</span>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                黄芪为豆科植物蒙古黄芪或膜荚黄芪的干燥根。呈圆柱形，有的有分枝，上端较粗，长30～90cm，直径1～3.5cm。表面淡棕黄色或淡棕褐色，有不整齐的纵皱纹或纵沟。质硬而韧，不易折断，断面纤维性强，并显粉性，皮部黄白色，木部淡黄色，有放射状纹理和裂隙，老根中心偶呈枯朽状，黑褐色或呈空洞。气微，味微甜，嚼之微有豆腥味。
+                            </p>
+                        </div>
+                        
+                        <!-- 功效与作用 -->
+                        <div class="scroll-animate delay-100">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fa fa-heartbeat text-primary mr-2"></i> 功效与作用
+                            </h2>
+                            <div class="bg-neutral p-6 rounded-lg">
+                                <ul class="space-y-3">
+                                    <li class="flex">
+                                        <i class="fa fa-check-circle text-tertiary mt-1 mr-3"></i>
+                                        <span><strong>补气升阳</strong>：用于气虚乏力，食少便溏，中气下陷，久泻脱肛，便血崩漏，表虚自汗，气虚水肿。</span>
+                                    </li>
+                                    <li class="flex">
+                                        <i class="fa fa-check-circle text-tertiary mt-1 mr-3"></i>
+                                        <span><strong>固表止汗</strong>：用于自汗、盗汗等症，常与白术、防风等同用，如玉屏风散。</span>
+                                    </li>
+                                    <li class="flex">
+                                        <i class="fa fa-check-circle text-tertiary mt-1 mr-3"></i>
+                                        <span><strong>利水消肿</strong>：用于气虚水肿，常与防己、白术等同用，如防己黄芪汤。</span>
+                                    </li>
+                                    <li class="flex">
+                                        <i class="fa fa-check-circle text-tertiary mt-1 mr-3"></i>
+                                        <span><strong>生津养血</strong>：用于气虚血亏，内热消渴等症。</span>
+                                    </li>
+                                    <li class="flex">
+                                        <i class="fa fa-check-circle text-tertiary mt-1 mr-3"></i>
+                                        <span><strong>行滞通痹</strong>：用于气虚血滞，半身不遂，痹痛麻木等症。</span>
+                                    </li>
+                                    <li class="flex">
+                                        <i class="fa fa-check-circle text-tertiary mt-1 mr-3"></i>
+                                        <span><strong>托毒排脓</strong>：用于痈疽难溃，久溃不敛等症。</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- 炮制方法 -->
+                        <div class="scroll-animate delay-200">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fa fa-fire text-secondary mr-2"></i> 炮制方法
+                            </h2>
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-secondary pl-4 py-1">
+                                    <h3 class="font-semibold text-lg">生黄芪</h3>
+                                    <p class="text-gray-700">取原药材，除去杂质，洗净，润透，切厚片，干燥。生黄芪偏于固表止汗，利水消肿，托毒排脓。</p>
+                                </div>
+                                <div class="border-l-4 border-secondary pl-4 py-1">
+                                    <h3 class="font-semibold text-lg">炙黄芪</h3>
+                                    <p class="text-gray-700">取黄芪片，照蜜炙法炒至不粘手。炙黄芪偏于补气升阳，常用于气虚乏力，中气下陷等症。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 用法用量 -->
+                        <div class="scroll-animate delay-300">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fa fa-calculator text-primary mr-2"></i> 用法用量
+                            </h2>
+                            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h3 class="font-semibold mb-2">内服</h3>
+                                        <p class="text-gray-700 mb-2">煎汤，9～30g；或入丸、散、膏剂。</p>
+                                        <p class="text-gray-700">炙用可增强补气升阳作用。</p>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold mb-2">外用</h3>
+                                        <p class="text-gray-700">适量，研末敷或煎水熏洗。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 注意事项 -->
+                        <div class="scroll-animate delay-400">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fa fa-exclamation-triangle text-secondary mr-2"></i> 注意事项
+                            </h2>
+                            <div class="bg-primary/5 border border-primary/20 rounded-lg p-6">
+                                <ul class="space-y-2">
+                                    <li class="flex">
+                                        <i class="fa fa-times-circle text-primary mt-1 mr-3"></i>
+                                        <span>凡表实邪盛，内有积滞，阴虚阳亢，疮疡初起或溃后热毒尚盛者，均不宜用。</span>
+                                    </li>
+                                    <li class="flex">
+                                        <i class="fa fa-times-circle text-primary mt-1 mr-3"></i>
+                                        <span>不宜与龟甲、白鲜皮同用。</span>
+                                    </li>
+                                    <li class="flex">
+                                        <i class="fa fa-times-circle text-primary mt-1 mr-3"></i>
+                                        <span>孕妇及哺乳期妇女使用前应咨询医师。</span>
+                                    </li>
+                                    <li class="flex">
+                                        <i class="fa fa-times-circle text-primary mt-1 mr-3"></i>
+                                        <span>服药期间忌食萝卜、绿豆和强碱性食物如葡萄、茶叶、葡萄酒、海带芽、海带等。</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- 现代研究 -->
+                        <div class="scroll-animate delay-500">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fa fa-flask text-tertiary mr-2"></i> 现代研究
+                            </h2>
+                            <p class="text-gray-700 mb-4">
+                                现代药理学研究表明，黄芪主要含有黄芪甲苷、黄芪多糖、黄酮类等成分，具有以下作用：
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="bg-neutral p-4 rounded-lg">
+                                    <h3 class="font-semibold mb-2">增强免疫力</h3>
+                                    <p class="text-gray-700 text-sm">黄芪多糖能显著提高机体免疫功能，增强巨噬细胞的吞噬能力。</p>
+                                </div>
+                                <div class="bg-neutral p-4 rounded-lg">
+                                    <h3 class="font-semibold mb-2">抗氧化作用</h3>
+                                    <p class="text-gray-700 text-sm">具有较强的抗氧化活性，能清除自由基，延缓衰老。</p>
+                                </div>
+                                <div class="bg-neutral p-4 rounded-lg">
+                                    <h3 class="font-semibold mb-2">调节血糖</h3>
+                                    <p class="text-gray-700 text-sm">对正常血糖无明显影响，但能降低实验性高血糖。</p>
+                                </div>
+                                <div class="bg-neutral p-4 rounded-lg">
+                                    <h3 class="font-semibold mb-2">保护心血管</h3>
+                                    <p class="text-gray-700 text-sm">能扩张血管，降低血压，改善心肌供血，保护心肌细胞。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 相关方剂 -->
+                        <div class="scroll-animate delay-500">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fa fa-cubes text-primary mr-2"></i> 相关方剂
+                            </h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <a href="#" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-300 group">
+                                    <h3 class="font-semibold text-primary group-hover:underline">黄芪桂枝五物汤</h3>
+                                    <p class="text-gray-600 text-sm mt-1">由黄芪、桂枝、芍药、生姜、大枣组成，用于血痹证。</p>
+                                </a>
+                                <a href="#" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-300 group">
+                                    <h3 class="font-semibold text-primary group-hover:underline">玉屏风散</h3>
+                                    <p class="text-gray-600 text-sm mt-1">由黄芪、白术、防风组成，用于表虚自汗，易感风邪。</p>
+                                </a>
+                                <a href="#" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-300 group">
+                                    <h3 class="font-semibold text-primary group-hover:underline">补中益气汤</h3>
+                                    <p class="text-gray-600 text-sm mt-1">由黄芪、白术、陈皮等组成，用于中气下陷证。</p>
+                                </a>
+                                <a href="#" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-300 group">
+                                    <h3 class="font-semibold text-primary group-hover:underline">防己黄芪汤</h3>
+                                    <p class="text-gray-600 text-sm mt-1">由防己、黄芪、白术、甘草组成，用于气虚水肿。</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <a href="#" class="text-2xl font-bold flex items-center">
+                        <i class="fa fa-heartbeat mr-2"></i>北京理工大学附属中医医院
+                    </a>
+                    <p class="text-gray-400 mt-2">地址：北京市海淀区中关村南大街5号 | 电话：010-12345678 | 邮箱：hospital@bit.edu.cn</p>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weixin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-weibo text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fa fa-youtube-play text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>© 2023 北京理工大学附属中医医院 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary/90 z-50">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript 交互逻辑 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单切换
+            const menuBtn = document.getElementById('menuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                // 切换图标
+                const icon = menuBtn.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                }
+            });
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            
+            // 滚动动画元素
+            const animateElements = document.querySelectorAll('.scroll-animate');
+            
+            // 检查元素是否在视口中
+            function checkInView() {
+                animateElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementBottom = element.getBoundingClientRect().bottom;
+                    const isVisible = (elementTop < window.innerHeight - 100) && (elementBottom > 0);
+                    
+                    if (isVisible) {
+                        element.classList.add('visible');
+                    }
+                });
+                
+                // 更新导航栏样式
+                if (window.scrollY > 100) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+                
+                // 更新返回顶部按钮显示状态
+                toggleBackToTop();
+                
+                // 更新滚动进度条
+                updateScrollProgress();
+            }
+            
+            // 更新滚动进度条
+            function updateScrollProgress() {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.getElementById("scrollProgress").style.width = scrolled + "%";
+            }
+            
+            // 返回顶部按钮
+            const backToTopBtn = document.getElementById('backToTop');
+            
+            function toggleBackToTop() {
+                if (window.scrollY > 500) {
+                    backToTopBtn.classList.remove('opacity-0', 'invisible');
+                    backToTopBtn.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopBtn.classList.add('opacity-0', 'invisible');
+                    backToTopBtn.classList.remove('opacity-100', 'visible');
+                }
+            }
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 初始化检查
+            checkInView();
+            
+            // 监听滚动事件
+            window.addEventListener('scroll', checkInView);
+        });
+    </script>
+</body>
+</html>
